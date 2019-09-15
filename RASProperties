@@ -1,0 +1,103 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open Source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      RASProperties; 
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+RASModel            turbulentPotentialAreRe;
+
+turbulence          on;
+
+printCoeffs         on;
+
+turbulentPotentialAreReCoeffs{
+
+	sigmaK              1.0;  
+	sigmaEps            0.83; 
+	sigmaPhi            0.33;
+	sigmaPsi            1.0; 
+
+	sCk              	0.0;
+	sCeps				0.0;
+	sCphi				0.0;
+	sCpsi				0.0;
+	sCs                 0.33; 
+	
+	prodType			1.1;
+	cPrK				0.2; 
+	cPrP				1.0;  
+	pMix				1.0;
+	gType               7.0;
+	cB 					6.0;
+	cGn					0.05;
+	cGw					3.0;
+	cLw                 0.0;
+	cLn					0.33;
+
+	eqncEp1             false;
+	eqncEp2             false;
+	cEp1				1.45;                           
+    cEp2				1.83;
+    cEpType 			1.0;
+    cEp4				0.05;
+    cPe     	        0.1;
+	eqnEpsHat           mod;
+	cEhmM				10.0;	  
+	
+	transType           6.0; 
+	cT                  0.0; 
+	cA                  0.0;  
+	
+	dampType			15.0; 
+	cNF					10.0; 
+	cN1					1.0;  
+	cN2					2.0;
+	cND1                0.8;
+	cND2                0.8;
+	nutRatMax			1e5;
+	eqncMu				false;  
+	cMu					0.21; 
+	betaK				0.09; 
+    nutReal				false;
+	nutType				5.0;
+	
+	tslimiter			false;
+	lslimiter			false;
+
+	cD1					0.0; 
+	cD2					0.0;
+	cD3					1.0;
+	cD4					1.0;
+ 
+    cPm					1.0;
+	cP1					1.9; 
+    cP2					0.6;  
+	cP3				 	1.0;
+	cP4					0.21;  
+    cP5                 0.006;
+    psksType            0.0;
+
+	debugWrite          true;
+}
+
+
+boundaryCoeffs{
+	tslimiter			false;
+	nutRatMax			1e5;
+	cMu					0.21;
+	betaK				0.09;
+}
+
+// ************************************************************************* //
+
+
