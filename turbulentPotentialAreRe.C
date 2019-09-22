@@ -1462,7 +1462,7 @@ void turbulentPotentialAreRe::correct()
     //nut_ = 1.0/((gradkSqrt_ & gradkSqrt_)/magProd + magProd/((psiActual_ & psiActual_) + (k0_*k0_)));
     // nut_ = ((0.12*gamma_ + 0.17)*sqr(tpphi_)*cN1_ + cMu_*(sqr(tpphi_)*(1.0-cN1_)))*k_/epsHat_;
 
-    cMuRe_ = (0.5*(0.12 + 0.37*lambda_)*tpphi_ + 0.5*(tppsi_ & tppsi_));
+    cMuRe_ = cN1_*(0.5*(0.12 + 0.37*lambda_)*tpphi_ + 0.5*(tppsi_ & tppsi_)) + (1.0-cN1_)*cMu_*tpphi_;
 
     nut_ = cMuRe_*k_*k_/epsilon_;    
     nut_ = min(nut_,nutRatMax_*nu());  
