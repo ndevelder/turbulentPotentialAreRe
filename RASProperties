@@ -84,7 +84,7 @@ turbulentPotentialAreReCoeffs{
     cP2					0.6;  
 	cP3				 	1.0;
 	cP4					0.21;  
-    cP5                 0.006;
+    cP5                 0.0;
     psksType            0.0;
 
 	debugWrite          true;

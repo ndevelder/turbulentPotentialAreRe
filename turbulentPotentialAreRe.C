@@ -1207,7 +1207,7 @@ void turbulentPotentialAreRe::correct()
     volScalarField G("RASModel::G", nut_*S2);
 
 	//tpProd_ = pMix_*(tppsi_ & vorticity_) + (1.0-pMix_)*G/(k_);
-    tpProd_ = (tppsi_ & vorticity_);
+    tpProd_ = mag(tppsi_ & vorticity_);
 	tpProdSqr_ = sqr(tpProd_);
 	tpProd3d_ = mag(psiActual_ ^ vorticity_);	
 
@@ -1367,8 +1367,8 @@ void turbulentPotentialAreRe::correct()
       // From K
       - fvm::Sp(0.5*tpProd_,tpphiSqrt_)
 
-	  // Transition
-      + transPhi
+	  // Transition 
+      + 0.5*(1.0/(sqrt(tpphi_ + tph0)))*transPhi  
     );  
 
     tpphiSqrtEqn().relax();
