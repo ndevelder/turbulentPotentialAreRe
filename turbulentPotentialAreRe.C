@@ -1061,7 +1061,7 @@ tmp<fvVectorMatrix> turbulentPotentialAreRe::divDevReff() const
        fvc::grad(phiActual_)
      + fvc::curl(psiActual_)
      + fvc::laplacian(nut_, U_, "laplacian(nut,U)")
-     - fvm::laplacian(nuEff(), U_)
+     - fvm::laplacian((nut_ + nu()), U_)
     );
 }
 
@@ -1204,12 +1204,14 @@ void turbulentPotentialAreRe::correct()
     //*************************************//	
 
     const volScalarField S2(2*magSqr(symm(fvc::grad(U_))));
-    volScalarField G("RASModel::G", nut_*S2);
+    volScalarField Gnut("RASModel::Gnut", nut_*S2);
+    volScalarField G("RASModel::G", (psiActual_ & vorticity_));
+
 
 	//tpProd_ = pMix_*(tppsi_ & vorticity_) + (1.0-pMix_)*G/(k_);
-    tpProd_ = mag(tppsi_ & vorticity_);
+    tpProd_ = (tppsi_ & vorticity_);
 	tpProdSqr_ = sqr(tpProd_);
-	tpProd3d_ = mag(psiActual_ ^ vorticity_);	
+	tpProd3d_ = mag(psiActual_ ^ vorticity_);
 
 	
     //*************************************//   
@@ -1231,7 +1233,7 @@ void turbulentPotentialAreRe::correct()
     bound(pod_,tph0);
 
     volScalarField gammaWall("gammaWall", cGw_*nu()*(gradTpphiSqrt & gradTpphiSqrt)*k_/epsilon_); 
-    volScalarField lambdaWall("gammaWall", cLw_*nu()*(gradTpphiSqrt & gradTpphiSqrt)*k_/epsilon_); 
+    volScalarField lambdaWall("lambdaWall", cLw_*nu()*(gradTpphiSqrt & gradTpphiSqrt)*k_/epsilon_); 
     volScalarField nutRe("nutRe", cMu_*sqr(tpphiSqrt_)*k_*k_/epsilon_);
     gamma_ = 1.0/(1.0 + cGn_*(nutRe/nu()) + gammaWall);
     lambda_ = 1.0/(1.0 + cLn_*sqrt(nutRe/nu()) + lambdaWall);
@@ -1315,7 +1317,7 @@ void turbulentPotentialAreRe::correct()
       + fvm::SuSp(-fvc::div(phi_), k_)
       - fvm::laplacian(DkEff(), k_)
      ==
-        tpProd_*k_
+        G
       - fvm::Sp(epsilon_/(k_+k0_),k_)
     );
 
@@ -1333,11 +1335,11 @@ void turbulentPotentialAreRe::correct()
     // Fix for separated flows 
     //*************************************// 	
 
-	volScalarField cTexp("cTexp", cT_*sqrt((((nu()/100.0)+nut_)/nu())));
+	volScalarField cTexp("cTexp", cT_*sqrt(((nutSmall+nut_)/nu())));
 	
-    volScalarField transPhi("transPhi", cTexp*cA_*((2.0/3.0) - sqr(tpphiSqrt_))*tpProd_);	
-	volVectorField transPsi("transPsi", cTexp*((1.0 - alpha_)*vorticity_ - cA_*tppsi_*tpProd_));	
-	
+    volScalarField transPhi("transPhi", cTexp*cA_*((2.0/3.0) - tpphi_)*tpProd_);	
+	//volVectorField transPsi("transPsi", cTexp*((1.0 - alpha_)*vorticity_ - cA_*tppsi_*tpProd_));	
+	volVectorField transPsi("transPsi", cTexp*(3.0*mag(tppsi_) - cA_*(tppsi_ & tppsi_))*vorticity_);
 	
     volScalarField psDamp("psDamp", nut_/(nut_ + cNF_*nu()));
     volScalarField psDampOne("psDampOne", nut_/(nut_ + nu()));
